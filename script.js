@@ -1,0 +1,97 @@
+// ========================
+// Navbar toggle (for small screen)
+// ========================
+const nav = document.querySelector(".nav-links");
+const logo = document.querySelector(".logo");
+
+logo.addEventListener("click", () => {
+  nav.classList.toggle("active");
+});
+
+// ========================
+// "See More" button functionality
+// ========================
+const seeMoreBtn = document.querySelector(".see-more a");
+const productGrid = document.querySelector(".product-grid");
+
+seeMoreBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+
+  // Create a new product card dynamically
+  const newCard = document.createElement("div");
+  newCard.classList.add("product-card");
+  newCard.innerHTML = `
+      <img src="./images/camera.png" alt="New Product" />
+      <h3>New Product</h3>
+      <p class="price">$500.00</p>
+      <div class="stars">⭐ 4.9 (99)</div>
+      <p class="delivery">Express protection possible!</p>
+  `;
+
+  productGrid.appendChild(newCard);
+});
+
+// ========================
+// Cart system with sidebar + localStorage
+// ========================
+const cartIcon = document.querySelector(".icon");
+const cartCountSpan = document.getElementById("cart-count");
+const cartSidebar = document.getElementById("cart-sidebar");
+const closeCartBtn = document.getElementById("close-cart");
+const cartItemsList = document.getElementById("cart-items");
+const cartTotalEl = document.getElementById("cart-total");
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+// Update UI from storage
+function updateCartUI() {
+  cartItemsList.innerHTML = "";
+  let total = 0;
+
+  cart.forEach((item, index) => {
+    total += item.price;
+
+    const li = document.createElement("li");
+    li.innerHTML = `
+      ${item.name} - $${item.price.toFixed(2)}
+      <button onclick="removeItem(${index})">🗑️</button>
+    `;
+    cartItemsList.appendChild(li);
+  });
+
+  cartCountSpan.textContent = cart.length;
+  cartTotalEl.textContent = total.toFixed(2);
+  localStorage.setItem("cart", JSON.stringify(cart));
+}
+
+// Remove item from cart
+window.removeItem = function (index) {
+  cart.splice(index, 1);
+  updateCartUI();
+};
+
+// Add products to cart when clicking on product-card
+document.querySelectorAll(".product-card").forEach((card) => {
+  card.addEventListener("click", () => {
+    const name = card.querySelector("h3").textContent;
+    const price = parseFloat(
+      card.querySelector(".price").textContent.replace("$", "")
+    );
+    cart.push({ name, price });
+    updateCartUI();
+  });
+});
+
+// Open cart sidebar
+cartIcon.addEventListener("click", (e) => {
+  e.preventDefault();
+  cartSidebar.classList.add("active");
+});
+
+// Close cart sidebar
+closeCartBtn.addEventListener("click", () => {
+  cartSidebar.classList.remove("active");
+});
+
+// Load on page start
+updateCartUI();
