@@ -95,3 +95,9 @@ closeCartBtn.addEventListener("click", () => {
 
 // Load on page start
 updateCartUI();
+
+// ========== Wishlist Sidebar ==========
+const wishlistBtn = document.getElementById("wishlist-btn");
+const wishlistSidebar = document.getElementById("wishlist-sidebar");
+const closeWishlistBtn = document.getElementById("close-wishlist");
+const wishlistItemsList = document.getElementById("wishlist-items");

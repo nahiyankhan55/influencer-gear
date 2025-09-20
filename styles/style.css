@@ -170,13 +170,14 @@ body {
 }
 
 .product-card {
-  background-color: #fff;
+  background-color: #ffe6f2;
   border-radius: 10px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
   padding: 20px;
   text-align: left;
   max-width: 280px;
   transition: transform 0.3s ease;
+  cursor: pointer;
 }
 
 .product-card:hover {
