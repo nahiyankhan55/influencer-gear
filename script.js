@@ -17,17 +17,6 @@ const productGrid = document.querySelector(".product-grid");
 seeMoreBtn.addEventListener("click", (e) => {
   e.preventDefault();
 
-  // Create a new product card dynamically
-  const newCard = document.createElement("div");
-  newCard.classList.add("product-card");
-  newCard.innerHTML = `
-      <img src="./images/camera.png" alt="New Product" />
-      <h3>New Product</h3>
-      <p class="price">$500.00</p>
-      <div class="stars">⭐ 4.9 (99)</div>
-      <p class="delivery">Express protection possible!</p>
-  `;
-
   productGrid.appendChild(newCard);
 });
 
