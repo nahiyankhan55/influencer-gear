@@ -150,3 +150,54 @@ document.querySelectorAll(".wishlist-btn").forEach((btn) => {
 
 // Init
 updateWishlistUI();
+
+// Card Love Icon → Add to Wishlist with animation
+document.querySelectorAll(".wishlist-btn").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation(); // card click block
+    const card = e.target.closest(".product-card");
+    const name = card.querySelector("h3").textContent;
+
+    if (!wishlist.includes(name)) {
+      wishlist.push(name);
+      updateWishlistUI();
+
+      // Animation add
+      btn.classList.add("active");
+      setTimeout(() => btn.classList.remove("active"), 500);
+    } else {
+      alert(`⚠️ ${name} is already in Wishlist`);
+    }
+  });
+});
+
+// Toast function
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2000); // 2 sec later hide
+}
+
+// Wishlist এ add করলে toast দেখাও
+document.querySelectorAll(".wishlist-btn").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const card = e.target.closest(".product-card");
+    const name = card.querySelector("h3").textContent;
+
+    if (!wishlist.includes(name)) {
+      wishlist.push(name);
+      updateWishlistUI();
+      showToast(`✅ ${name} added to Wishlist!`);
+
+      btn.classList.add("active");
+      setTimeout(() => btn.classList.remove("active"), 500);
+    } else {
+      showToast(`⚠️ ${name} is already in Wishlist`);
+    }
+  });
+});

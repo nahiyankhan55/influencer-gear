@@ -199,6 +199,50 @@ body {
   color: white;
 }
 
+.wishlist-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  padding: 6px 10px;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform 0.3s, background 0.3s, color 0.3s;
+}
+
+.wishlist-btn.active {
+  background: red;
+  color: white;
+  transform: scale(1.3);
+}
+
+.wishlist-btn:active {
+  transform: scale(1.1);
+}
+
+/* Toast Style */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #333;
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  z-index: 9999;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .product-card img {
   width: 100%;
   border-radius: 8px;
