@@ -101,3 +101,52 @@ const wishlistBtn = document.getElementById("wishlist-btn");
 const wishlistSidebar = document.getElementById("wishlist-sidebar");
 const closeWishlistBtn = document.getElementById("close-wishlist");
 const wishlistItemsList = document.getElementById("wishlist-items");
+
+// ==========================
+// Wishlist state
+let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+// Update Wishlist UI
+function updateWishlistUI() {
+  const wishlistItemsList = document.getElementById("wishlist-items");
+  const wishlistCountSpan = document.getElementById("wishlist-count");
+
+  wishlistItemsList.innerHTML = "";
+  wishlist.forEach((name, index) => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      ${name}
+      <button onclick="removeWishlist(${index})">🗑️</button>
+    `;
+    wishlistItemsList.appendChild(li);
+  });
+
+  wishlistCountSpan.textContent = wishlist.length;
+  localStorage.setItem("wishlist", JSON.stringify(wishlist));
+}
+
+// Remove from wishlist
+window.removeWishlist = (i) => {
+  wishlist.splice(i, 1);
+  updateWishlistUI();
+};
+
+// Card Love Icon → Add to Wishlist
+document.querySelectorAll(".wishlist-btn").forEach((btn) => {
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation(); // যেন card click এর সাথে clash না হয়
+    const card = e.target.closest(".product-card");
+    const name = card.querySelector("h3").textContent;
+
+    if (!wishlist.includes(name)) {
+      wishlist.push(name);
+      updateWishlistUI();
+      alert(`❤️ ${name} added to Wishlist!`);
+    } else {
+      alert(`⚠️ ${name} is already in Wishlist`);
+    }
+  });
+});
+
+// Init
+updateWishlistUI();
