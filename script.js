@@ -9,19 +9,7 @@ logo.addEventListener("click", () => {
 });
 
 // ========================
-// "See More" button functionality
-// ========================
-const seeMoreBtn = document.querySelector(".see-more a");
-const productGrid = document.querySelector(".product-grid");
-
-seeMoreBtn.addEventListener("click", (e) => {
-  e.preventDefault();
-
-  productGrid.appendChild(newCard);
-});
-
-// ========================
-// Cart system with sidebar + localStorage
+// Cart + Wishlist Sidebars
 // ========================
 const cartIcon = document.querySelector(".icon");
 const cartCountSpan = document.getElementById("cart-count");
@@ -30,20 +18,44 @@ const closeCartBtn = document.getElementById("close-cart");
 const cartItemsList = document.getElementById("cart-items");
 const cartTotalEl = document.getElementById("cart-total");
 
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+const wishlistBtn = document.getElementById("wishlist-btn");
+const wishlistSidebar = document.getElementById("wishlist-sidebar");
+const closeWishlistBtn = document.getElementById("close-wishlist");
+const wishlistItemsList = document.getElementById("wishlist-items");
+const wishlistCountSpan = document.getElementById("wishlist-count");
 
-// Update UI from storage
+// ========================
+// State (with LocalStorage)
+// ========================
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+
+// ========================
+// Toast function
+// ========================
+function showToast(message, type = "success") {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.className = "toast " + type + " show";
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 2000);
+}
+
+// ========================
+// Cart UI Update
+// ========================
 function updateCartUI() {
   cartItemsList.innerHTML = "";
   let total = 0;
 
   cart.forEach((item, index) => {
     total += item.price;
-
     const li = document.createElement("li");
     li.innerHTML = `
       ${item.name} - $${item.price.toFixed(2)}
-      <button onclick="removeItem(${index})">🗑️</button>
+      <button onclick="removeFromCart(${index})">🗑️</button>
     `;
     cartItemsList.appendChild(li);
   });
@@ -54,58 +66,22 @@ function updateCartUI() {
 }
 
 // Remove item from cart
-window.removeItem = function (index) {
+window.removeFromCart = (index) => {
   cart.splice(index, 1);
   updateCartUI();
+  showToast("❌ Item removed from Cart", "error");
 };
 
-// Add products to cart when clicking on product-card
-document.querySelectorAll(".product-card").forEach((card) => {
-  card.addEventListener("click", () => {
-    const name = card.querySelector("h3").textContent;
-    const price = parseFloat(
-      card.querySelector(".price").textContent.replace("$", "")
-    );
-    cart.push({ name, price });
-    updateCartUI();
-  });
-});
-
-// Open cart sidebar
-cartIcon.addEventListener("click", (e) => {
-  e.preventDefault();
-  cartSidebar.classList.add("active");
-});
-
-// Close cart sidebar
-closeCartBtn.addEventListener("click", () => {
-  cartSidebar.classList.remove("active");
-});
-
-// Load on page start
-updateCartUI();
-
-// ========== Wishlist Sidebar ==========
-const wishlistBtn = document.getElementById("wishlist-btn");
-const wishlistSidebar = document.getElementById("wishlist-sidebar");
-const closeWishlistBtn = document.getElementById("close-wishlist");
-const wishlistItemsList = document.getElementById("wishlist-items");
-
-// ==========================
-// Wishlist state
-let wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-
-// Update Wishlist UI
+// ========================
+// Wishlist UI Update
+// ========================
 function updateWishlistUI() {
-  const wishlistItemsList = document.getElementById("wishlist-items");
-  const wishlistCountSpan = document.getElementById("wishlist-count");
-
   wishlistItemsList.innerHTML = "";
   wishlist.forEach((name, index) => {
     const li = document.createElement("li");
     li.innerHTML = `
       ${name}
-      <button onclick="removeWishlist(${index})">🗑️</button>
+      <button onclick="removeFromWishlist(${index})">🗑️</button>
     `;
     wishlistItemsList.appendChild(li);
   });
@@ -115,78 +91,125 @@ function updateWishlistUI() {
 }
 
 // Remove from wishlist
-window.removeWishlist = (i) => {
-  wishlist.splice(i, 1);
+window.removeFromWishlist = (index) => {
+  const name = wishlist[index];
+  wishlist.splice(index, 1);
   updateWishlistUI();
+  showToast(`❌ ${name} removed from Wishlist`, "error");
 };
 
-// Card Love Icon → Add to Wishlist
-document.querySelectorAll(".wishlist-btn").forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    e.stopPropagation(); // যেন card click এর সাথে clash না হয়
-    const card = e.target.closest(".product-card");
-    const name = card.querySelector("h3").textContent;
+// ========================
+// Product Data
+// ========================
+const products = [
+  {
+    name: "Flex Tripod",
+    price: 50.48,
+    rating: 4.5,
+    reviews: 458,
+    img: "./images/tripod.png",
+  },
+  {
+    name: "Microphone",
+    price: 120.25,
+    rating: 4.6,
+    reviews: 419,
+    img: "./images/microphone.png",
+  },
+  {
+    name: "Airbuds",
+    price: 100.0,
+    rating: 4.6,
+    reviews: 455,
+    img: "./images/airbuds.png",
+  },
+  {
+    name: "Drone",
+    price: 980.25,
+    rating: 4.6,
+    reviews: 450,
+    img: "./images/drone.png",
+  },
+];
 
-    if (!wishlist.includes(name)) {
-      wishlist.push(name);
-      updateWishlistUI();
-      alert(`❤️ ${name} added to Wishlist!`);
-    } else {
-      alert(`⚠️ ${name} is already in Wishlist`);
-    }
+// ========================
+// Render Products
+// ========================
+function renderProducts() {
+  const grid = document.getElementById("product-grid");
+  grid.innerHTML = "";
+
+  products.forEach((p, index) => {
+    const card = document.createElement("div");
+    card.classList.add("product-card");
+    card.innerHTML = `
+      <button class="wishlist-btn" data-index="${index}">❤</button>
+      <img src="${p.img}" alt="${p.name}" />
+      <h3>${p.name}</h3>
+      <p class="price">$${p.price.toFixed(2)}</p>
+      <div class="stars">⭐ ${p.rating} (${p.reviews})</div>
+      <p class="delivery">Express protection possible!</p>
+      <button class="add-cart" data-index="${index}">🛒 Add to Cart</button>
+    `;
+    grid.appendChild(card);
   });
-});
 
-// Init
-updateWishlistUI();
-
-// Card Love Icon → Add to Wishlist with animation
-document.querySelectorAll(".wishlist-btn").forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    e.stopPropagation(); // card click block
-    const card = e.target.closest(".product-card");
-    const name = card.querySelector("h3").textContent;
-
-    if (!wishlist.includes(name)) {
-      wishlist.push(name);
-      updateWishlistUI();
-
-      // Animation add
-      btn.classList.add("active");
-      setTimeout(() => btn.classList.remove("active"), 500);
-    } else {
-      alert(`⚠️ ${name} is already in Wishlist`);
-    }
-  });
-});
-
-// Toast function
-function showToast(message) {
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.classList.add("show");
-
-  setTimeout(() => {
-    toast.classList.remove("show");
-  }, 2000); // 2 sec later hide
+  attachWishlistEvents();
+  attachCartEvents();
 }
 
-// Wishlist এ add করলে toast দেখাও
-document.querySelectorAll(".wishlist-btn").forEach((btn) => {
-  btn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    const card = e.target.closest(".product-card");
-    const name = card.querySelector("h3").textContent;
-
-    if (!wishlist.includes(name)) {
-      wishlist.push(name);
-      updateWishlistUI();
-      showToast(`✅ ${name} added to Wishlist!`);
-
-      btn.classList.add("active");
-      setTimeout(() => btn.classList.remove("active"), 500);
-    } else {
-      showToast(`⚠️ ${name} is already in Wishlist`);
-    }
+// ========================
+// Attach Events
+// ========================
+function attachWishlistEvents() {
+  document.querySelectorAll(".wishlist-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const product = products[btn.dataset.index];
+      if (!wishlist.includes(product.name)) {
+        wishlist.push(product.name);
+        updateWishlistUI();
+        showToast(`✅ ${product.name} added to Wishlist`, "success");
+        btn.classList.add("active");
+      } else {
+        showToast(`⚠️ ${product.name} already in Wishlist`, "warning");
+      }
+    });
   });
+}
+
+function attachCartEvents() {
+  document.querySelectorAll(".add-cart").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const product = products[btn.dataset.index];
+      cart.push(product);
+      updateCartUI();
+      showToast(`🛒 ${product.name} added to Cart`, "success");
+    });
+  });
+}
+
+// ========================
+// Sidebar Open/Close
+// ========================
+cartIcon.addEventListener("click", (e) => {
+  e.preventDefault();
+  cartSidebar.classList.add("active");
 });
+closeCartBtn.addEventListener("click", () => {
+  cartSidebar.classList.remove("active");
+});
+
+wishlistBtn.addEventListener("click", () => {
+  wishlistSidebar.classList.add("active");
+});
+closeWishlistBtn.addEventListener("click", () => {
+  wishlistSidebar.classList.remove("active");
+});
+
+// ========================
+// Init
+// ========================
+renderProducts();
+updateCartUI();
+updateWishlistUI();

@@ -9,7 +9,32 @@
     <!-- Style.css Link -->
     <link rel="stylesheet" href="styles/style.css" />
     <style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff2f6;
+    padding: 10px 20px;
+  }
+  .navbar .logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: #000000;
+  }
+  .navbar .nav-links {
+    display: flex;
+    list-style: none;
+    gap: 15px;
+  }
+  .navbar .nav-links li a {
+    color: #000000;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+  .navbar .nav-links li a:hover {
+    color: #ff4081;
+  }
 </style>
 </head>
 <body>
@@ -18,21 +43,18 @@
     <div class="logo">Influencer <strong>products</strong></div>
     <nav>
       <ul class="nav-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Products</a></li>
-        <li><a href="#">Sign up</a></li>
-        <li><a href="#">Log in</a></li>
+        <li><a href="./index.html">Home</a></li>
+        <li><a href="./products.html">Products</a></li>
+        <li><a href="./signup.html">Sign up</a></li>
+        <li><a href="./login.html">Log in</a></li>
         <li><a href="#"><img src="online-shopping.png" alt="Cart" class="icon"><span id="cart-count">0</span>
-  </a>
-</li>
-
-      </ul>
-    </nav>
-  </header>
+  </a></li></ul></nav></header>
+  
 
     <!-- Hero Section -->
-     <!-- Toast Container -->
+<!-- Toast Container -->
 <div id="toast" class="toast"></div>
+
 
   <main class="hero-section">
     <div class="hero-text">
