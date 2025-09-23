@@ -388,7 +388,7 @@ body {
 .checkout-btn {
   width: 100%;
   padding: 10px;
-  background: #ff4757;
+  background: #c91f68;
   color: white;
   border: none;
   cursor: pointer;
@@ -396,7 +396,7 @@ body {
 }
 
 .checkout-btn:hover {
-  background: #e84118;
+  background: #700935;
 }
 
 footer {
